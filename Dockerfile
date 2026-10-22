@@ -12,6 +12,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends git ca-certific
  && rm -rf .git tests website evals \
  && pip install -e "/opt/hermes[messaging]" \
  && useradd -m -u 10000 hermes && mkdir -p /opt/data && chown hermes /opt/data
+COPY skills /opt/bots/skills
+COPY personalities.json /opt/bots/personalities.json
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 USER hermes
