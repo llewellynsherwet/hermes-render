@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: hermes-telegram
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: NOUS_API_KEY
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_ALLOWED_USERS
+        value: "5689404731"
+      - key: API_SERVER_KEY
+        generateValue: true
+      - key: HERMES_MODEL_DEFAULT
+        value: stepfun/step-3.7-flash:free
