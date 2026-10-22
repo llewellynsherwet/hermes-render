@@ -4,8 +4,8 @@ set -e
 mkdir -p "$HERMES_HOME"
 cat > "$HERMES_HOME/config.yaml" <<YAML
 model:
-  provider: nous-api
-  default: ${HERMES_MODEL_DEFAULT:-stepfun/step-3.7-flash:free}
+  provider: openrouter
+  default: ${HERMES_MODEL_DEFAULT:-nvidia/nemotron-3-super-120b-a12b:free}
 security:
   allow_lazy_installs: false
 YAML
