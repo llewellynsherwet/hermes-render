@@ -2,13 +2,27 @@
 # Render has no persistent disk: rebuild config.yaml from env on every boot.
 set -e
 mkdir -p "$HERMES_HOME"
+# Provider: Google Gemini (native "gemini" provider, reads GEMINI_API_KEY) when its key is set,
+# with OpenRouter as fallback if OPENROUTER_API_KEY is also set; otherwise OpenRouter only.
+if [ -n "$GEMINI_API_KEY" ]; then
+  PROVIDER=gemini; MODEL="${HERMES_MODEL_DEFAULT:-gemini-3.5-flash-lite}"
+else
+  PROVIDER=openrouter; MODEL="${HERMES_MODEL_DEFAULT:-openrouter/free}"
+fi
 cat > "$HERMES_HOME/config.yaml" <<YAML
 model:
-  provider: openrouter
-  default: ${HERMES_MODEL_DEFAULT:-nvidia/nemotron-3-super-120b-a12b:free}
+  provider: $PROVIDER
+  default: $MODEL
 security:
   allow_lazy_installs: false
 YAML
+if [ "$PROVIDER" = gemini ] && [ -n "$OPENROUTER_API_KEY" ]; then
+  cat >> "$HERMES_HOME/config.yaml" <<YAML
+fallback_providers:
+  - provider: openrouter
+    model: ${OPENROUTER_FALLBACK_MODEL:-openrouter/free}
+YAML
+fi
 # Custom personas (/personality <name>) + matching skills (/<name>)
 printf 'personalities: ' >> "$HERMES_HOME/config.yaml"
 cat /opt/bots/personalities.json >> "$HERMES_HOME/config.yaml"
